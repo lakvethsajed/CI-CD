@@ -24,12 +24,6 @@ jobs:
     - name: Run Unit Tests
       run: npm test
 
-    - name: Wait for Container to Initialize
-      run: sleep 15
-
-    - name: Run Integration Tests
-      run: npm run test:integration
-
     - name: Build Docker Image
       run: docker build -t my-html-app .
 
@@ -42,7 +36,15 @@ jobs:
       run: docker run -d -p 8080:80 --name my-html-container my-html-app
 
     - name: Wait for Container to Initialize
-      run: sleep 15
+      run: |
+        sleep 20
+        until curl -s http://localhost:8080; do
+          echo "Waiting for Nginx..."
+          sleep 5
+        done
+
+    - name: Run Integration Tests
+      run: npm run test:integration
 
     - name: Check Running Containers
       run: |
