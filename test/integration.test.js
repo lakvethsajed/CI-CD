@@ -1,50 +1,20 @@
-name: Deploy to AWS EC2
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const expect = chai.expect;
 
-on:
-  push:
-    branches:
-      - main  # This triggers the workflow on push to main branch
+chai.use(chaiHttp);
 
-jobs:
-  deploy:
-    runs-on: self-hosted  # Using your EC2 as a self-hosted runner
-
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '14'
-
-    - name: Install Dependencies
-      run: npm install
-
-    - name: Run Unit Tests
-      run: npm test
-
-    - name: Wait for Container to Initialize
-      run: sleep 15
-
-    - name: Run Integration Tests
-      run: npm run test:integration
-
-    - name: Build Docker Image
-      run: docker build -t my-html-app .
-
-    - name: Stop and Remove Old Container
-      run: |
-        docker stop my-html-container || true
-        docker rm my-html-container || true
-
-    - name: Run New Container
-      run: docker run -d -p 8080:80 --name my-html-container my-html-app
-
-    - name: Wait for Container to Initialize
-      run: sleep 15
-
-    - name: Check Running Containers
-      run: |
-        docker ps -a
-        docker logs my-html-container || true
+describe('Integration Test: Nginx Web Server', function() {
+  it('should return status 200 and the greeting from the HTML file', function(done) {
+    chai.request('http://localhost:8080')
+      .get('/')
+      .end((err, res) => {
+        console.log("Error:", err);
+        console.log("Response:", res?.text);
+        if (err) return done(err);
+        expect(res).to.have.status(200);
+        expect(res.text).to.include('Hello, World!');
+        done();
+      });
+  });
+});
