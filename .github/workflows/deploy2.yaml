@@ -48,5 +48,5 @@ jobs:
 
     - name: Check Running Containers
       run: |
-        docker ps -a
-        docker logs my-html-container || true
+        sudo docker ps -a
+        sudo docker logs my-html-container || true
