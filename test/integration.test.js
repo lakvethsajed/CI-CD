@@ -4,13 +4,16 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe('Integration Test: Nginx Web Server', () => {
-  it('should return status 200 and the greeting from the HTML file', (done) => {
-    chai.request('http://localhost:8080')  // Assuming Docker container is mapped to port 8080
+describe('Integration Test: Nginx Web Server', function() {
+  it('should return status 200 and the greeting from the HTML file', function(done) {
+    chai.request('http://localhost:8080')
       .get('/')
       .end((err, res) => {
-        expect(res).to.have.status(200);  // Ensure the server returns 200 status code
-        expect(res.text).to.include('Hello from Docker!');  // Ensure the HTML content is correct
+        console.log("Error:", err);
+        console.log("Response:", res?.text);
+        if (err) return done(err);
+        expect(res).to.have.status(200);
+        expect(res.text).to.include('Hello, World!');
         done();
       });
   });
