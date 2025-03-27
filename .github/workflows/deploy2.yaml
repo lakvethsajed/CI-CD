@@ -31,20 +31,20 @@ jobs:
       run: npm run test:integration
 
     - name: Build Docker Image
-      run: sudo docker build -t my-html-app .
+      run: docker build -t my-html-app .
 
     - name: Stop and Remove Old Container
       run: |
-        sudo docker stop my-html-container || true
-        sudo docker rm my-html-container || true
+        docker stop my-html-container || true
+        docker rm my-html-container || true
 
     - name: Run New Container
-      run: sudo docker run -d -p 8080:80 --name my-html-container my-html-app
+      run: docker run -d -p 8080:80 --name my-html-container my-html-app
 
     - name: Wait for Container to Initialize
       run: sleep 15
 
     - name: Check Running Containers
       run: |
-        sudo docker ps -a
-        sudo docker logs my-html-container || true
+        docker ps -a
+        docker logs my-html-container || true
